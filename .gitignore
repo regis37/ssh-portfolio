@@ -4,8 +4,8 @@
 *.dll
 *.so
 *.dylib
-portfolio
-ssh-portfolio
+/portfolio
+/ssh-portfolio
 
 # Test binary
 *.test
