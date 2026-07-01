@@ -1,0 +1,13 @@
+/var/log/portfolio/visits.log {
+    daily
+    size 10M
+    rotate 90
+    compress
+    delaycompress
+    missingok
+    notifempty
+    # copytruncate avoids restarting the service to reopen the log file:
+    # logrotate copies the current file then truncates it in place.
+    copytruncate
+    create 640 ubuntu ubuntu
+}
