@@ -10,10 +10,15 @@ WorkingDirectory=/opt/portfolio
 ExecStart=/opt/portfolio/portfolio
 Environment=PORTFOLIO_ADDR=0.0.0.0:23234
 Environment=PORTFOLIO_HOST_KEY=/opt/portfolio/host_key
+Environment=PORTFOLIO_LOG_PATH=/var/log/portfolio/visits.log
+# PORTFOLIO_LOG_SALT is injected from /opt/portfolio/.env (generated on the
+# server, never committed to git — required for GDPR-safe IP hashing).
+EnvironmentFile=-/opt/portfolio/.env
 Restart=always
 RestartSec=5
 StandardOutput=journal
 StandardError=journal
+ReadWritePaths=/var/log/portfolio
 
 [Install]
 WantedBy=multi-user.target
