@@ -39,3 +39,13 @@ id_ed25519.pub
 
 *.key
 *.pem
+
+# Runtime-generated secrets (never commit)
+.env
+*.env
+
+# Compiled Linux binary (cross-compiled artifact)
+/stats
+
+# Visitor log (server-side only, may contain hashed IPs)
+visits.log
