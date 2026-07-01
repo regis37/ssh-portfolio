@@ -67,8 +67,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 // TeaHandler is the wish bubbletea middleware handler.
+// It uses bm.MakeRenderer(sess) to obtain a renderer tied to the SSH client's
+// terminal color profile, so lipgloss emits the correct ANSI codes.
 func TeaHandler(sess ssh.Session) (tea.Model, []tea.ProgramOption) {
-	m := New()
+	renderer := bm.MakeRenderer(sess)
+	m := New(renderer)
 	pty, _, _ := sess.Pty()
 	m.width = pty.Window.Width
 	m.height = pty.Window.Height
