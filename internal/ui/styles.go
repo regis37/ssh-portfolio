@@ -3,24 +3,30 @@ package ui
 import "github.com/charmbracelet/lipgloss"
 
 type Theme struct {
-	// FocusColor is the border color when a panel has focus; adapts per theme.
-	FocusColor lipgloss.Color
-
+	FocusColor    lipgloss.Color
 	NavBorder     lipgloss.Style
 	ContentBorder lipgloss.Style
 	NavTitle      lipgloss.Style
 	ContentTitle  lipgloss.Style
 	Selected      lipgloss.Style
 	Normal        lipgloss.Style
-	// BodyText styles raw section content (fg + bg) so panel bg is consistent.
-	BodyText lipgloss.Style
-	Footer   lipgloss.Style
-	Counter  lipgloss.Style
-	HelpKey  lipgloss.Style
-	HelpDesc lipgloss.Style
+	BodyText      lipgloss.Style
+	Footer        lipgloss.Style
+	Counter       lipgloss.Style
+	HelpKey       lipgloss.Style
+	HelpDesc      lipgloss.Style
 }
 
-func darkTheme() Theme {
+// ns returns a new Style tied to the given renderer.
+// If r is nil it falls back to the lipgloss default renderer.
+func ns(r *lipgloss.Renderer) lipgloss.Style {
+	if r != nil {
+		return r.NewStyle()
+	}
+	return lipgloss.NewStyle()
+}
+
+func darkTheme(r *lipgloss.Renderer) Theme {
 	panelBg    := lipgloss.Color("#0D0B1E")
 	borderCol  := lipgloss.Color("#3D3570")
 	focusCol   := lipgloss.Color("#9B78FF")
@@ -31,51 +37,51 @@ func darkTheme() Theme {
 
 	return Theme{
 		FocusColor: focusCol,
-		NavBorder: lipgloss.NewStyle().
+		NavBorder: ns(r).
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(borderCol).
 			Background(panelBg).
 			Padding(0, 1),
-		ContentBorder: lipgloss.NewStyle().
+		ContentBorder: ns(r).
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(borderCol).
 			Background(panelBg).
 			Padding(0, 1),
-		NavTitle: lipgloss.NewStyle().
+		NavTitle: ns(r).
 			Bold(true).
 			Foreground(titleCol).
 			Background(panelBg),
-		ContentTitle: lipgloss.NewStyle().
+		ContentTitle: ns(r).
 			Bold(true).
 			Foreground(titleCol).
 			Background(panelBg),
-		Selected: lipgloss.NewStyle().
+		Selected: ns(r).
 			Background(selectedBg).
 			Foreground(lipgloss.Color("#FFFFFF")).
 			Bold(true).
 			Padding(0, 1),
-		Normal: lipgloss.NewStyle().
+		Normal: ns(r).
 			Foreground(textCol).
 			Background(panelBg).
 			Padding(0, 1),
-		BodyText: lipgloss.NewStyle().
+		BodyText: ns(r).
 			Foreground(textCol).
 			Background(panelBg),
-		Footer: lipgloss.NewStyle().
+		Footer: ns(r).
 			Foreground(mutedCol),
-		Counter: lipgloss.NewStyle().
+		Counter: ns(r).
 			Foreground(mutedCol),
-		HelpKey: lipgloss.NewStyle().
+		HelpKey: ns(r).
 			Bold(true).
 			Foreground(titleCol).
 			Background(panelBg),
-		HelpDesc: lipgloss.NewStyle().
+		HelpDesc: ns(r).
 			Foreground(textCol).
 			Background(panelBg),
 	}
 }
 
-func lightTheme() Theme {
+func lightTheme(r *lipgloss.Renderer) Theme {
 	panelBg    := lipgloss.Color("#EEE8FF")
 	borderCol  := lipgloss.Color("#B4A8E0")
 	focusCol   := lipgloss.Color("#5A30D4")
@@ -86,56 +92,54 @@ func lightTheme() Theme {
 
 	return Theme{
 		FocusColor: focusCol,
-		NavBorder: lipgloss.NewStyle().
+		NavBorder: ns(r).
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(borderCol).
 			Background(panelBg).
 			Padding(0, 1),
-		ContentBorder: lipgloss.NewStyle().
+		ContentBorder: ns(r).
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(borderCol).
 			Background(panelBg).
 			Padding(0, 1),
-		NavTitle: lipgloss.NewStyle().
+		NavTitle: ns(r).
 			Bold(true).
 			Foreground(titleCol).
 			Background(panelBg),
-		ContentTitle: lipgloss.NewStyle().
+		ContentTitle: ns(r).
 			Bold(true).
 			Foreground(titleCol).
 			Background(panelBg),
-		Selected: lipgloss.NewStyle().
+		Selected: ns(r).
 			Background(selectedBg).
 			Foreground(lipgloss.Color("#FFFFFF")).
 			Bold(true).
 			Padding(0, 1),
-		Normal: lipgloss.NewStyle().
+		Normal: ns(r).
 			Foreground(textCol).
 			Background(panelBg).
 			Padding(0, 1),
-		BodyText: lipgloss.NewStyle().
+		BodyText: ns(r).
 			Foreground(textCol).
 			Background(panelBg),
-		Footer: lipgloss.NewStyle().
+		Footer: ns(r).
 			Foreground(mutedCol),
-		Counter: lipgloss.NewStyle().
+		Counter: ns(r).
 			Foreground(mutedCol),
-		HelpKey: lipgloss.NewStyle().
+		HelpKey: ns(r).
 			Bold(true).
 			Foreground(titleCol).
 			Background(panelBg),
-		HelpDesc: lipgloss.NewStyle().
+		HelpDesc: ns(r).
 			Foreground(textCol).
 			Background(panelBg),
 	}
 }
 
-// focusedNavBorder returns the nav border style with the theme's focus color.
 func focusedNavBorder(t Theme) lipgloss.Style {
 	return t.NavBorder.BorderForeground(t.FocusColor)
 }
 
-// focusedContentBorder returns the content border style with the theme's focus color.
 func focusedContentBorder(t Theme) lipgloss.Style {
 	return t.ContentBorder.BorderForeground(t.FocusColor)
 }
