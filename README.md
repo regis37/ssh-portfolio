@@ -3,10 +3,10 @@
 > An interactive terminal portfolio you reach over SSH.
 
 ```
-ssh -p 23234 127.0.0.1
+ssh registsafack.duckdns.org
 ```
 
-No account, no password. Navigate with `j`/`k`, switch theme with `t`, quit with `q`.
+No account, no password, no `-p`. Navigate with `j`/`k`, switch theme with `t`, quit with `q`.
 
 ## What this project actually is
 
@@ -49,9 +49,9 @@ systemd · iptables · deployed on an Oracle Cloud ARM/AMD Always Free VM.
 ```bash
 go mod tidy
 go build ./...
-PORTFOLIO_ADDR=127.0.0.1:23234 ./portfolio
+PORTFOLIO_ADDR=127.0.0.1:2323 ./portfolio
 # then, in another terminal:
-ssh -p 23234 127.0.0.1
+ssh -p 2323 127.0.0.1
 ```
 
 ## Notes
