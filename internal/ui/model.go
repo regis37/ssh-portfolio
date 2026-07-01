@@ -1,6 +1,9 @@
 package ui
 
-import tea "github.com/charmbracelet/bubbletea"
+import (
+	"github.com/charmbracelet/lipgloss"
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 type focus int
 
@@ -18,14 +21,18 @@ type Model struct {
 	height    int
 	theme     Theme
 	scrollPos int
+	renderer  *lipgloss.Renderer
 }
 
-func New() Model {
+// New creates a model. Pass the session renderer from bm.MakeRenderer(sess)
+// so that lipgloss emits ANSI codes for the SSH client's actual color profile.
+func New(r *lipgloss.Renderer) Model {
 	return Model{
 		cursor:   0,
 		focus:    focusNav,
 		darkMode: true,
-		theme:    darkTheme(),
+		theme:    darkTheme(r),
+		renderer: r,
 	}
 }
 
@@ -36,9 +43,9 @@ func (m Model) Init() tea.Cmd {
 func (m *Model) toggleTheme() {
 	m.darkMode = !m.darkMode
 	if m.darkMode {
-		m.theme = darkTheme()
+		m.theme = darkTheme(m.renderer)
 	} else {
-		m.theme = lightTheme()
+		m.theme = lightTheme(m.renderer)
 	}
 }
 
