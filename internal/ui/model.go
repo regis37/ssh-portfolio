@@ -1,9 +1,6 @@
 package ui
 
-import (
-	"github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-)
+import tea "github.com/charmbracelet/bubbletea"
 
 type focus int
 
@@ -36,11 +33,6 @@ func (m Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m *Model) setSize(w, h int) {
-	m.width = w
-	m.height = h
-}
-
 func (m *Model) toggleTheme() {
 	m.darkMode = !m.darkMode
 	if m.darkMode {
@@ -65,6 +57,3 @@ func (m *Model) contentWidth() int {
 func (m *Model) innerHeight() int {
 	return m.height - 4
 }
-
-// unused — kept to satisfy potential future use
-var _ = lipgloss.NewStyle
