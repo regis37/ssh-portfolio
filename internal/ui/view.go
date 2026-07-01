@@ -52,7 +52,7 @@ func (m Model) mainView() string {
 
 	sec := sections[m.cursor]
 	contentTitle := m.theme.ContentTitle.Render("► " + sec.Title)
-	body := contentTitle + "\n\n" + sec.Content
+	body := contentTitle + "\n\n" + m.theme.BodyText.Render(sec.Content)
 
 	// Apply scroll
 	lines := strings.Split(body, "\n")
