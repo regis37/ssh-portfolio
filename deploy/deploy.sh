@@ -12,6 +12,10 @@ BINARY="portfolio"
 echo "==> Cross-compiling static Linux/amd64 binary..."
 GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o "$BINARY" ./cmd/portfolio
 
+echo "==> Stopping service (releases binary file lock)..."
+ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no "${REMOTE_USER}@${REMOTE_HOST}" \
+  "sudo systemctl stop portfolio 2>/dev/null || true"
+
 echo "==> Copying binary to ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/"
 ssh -i "$SSH_KEY" -o StrictHostKeyChecking=no "${REMOTE_USER}@${REMOTE_HOST}" \
   "sudo mkdir -p ${REMOTE_DIR} && sudo chown ${REMOTE_USER}:${REMOTE_USER} ${REMOTE_DIR}"
