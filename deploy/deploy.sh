@@ -50,14 +50,15 @@ $SCP deploy/logrotate-portfolio "${REMOTE_USER}@${REMOTE_HOST}:/tmp/logrotate-po
 $SSH "sudo mv /tmp/logrotate-portfolio /etc/logrotate.d/portfolio && \
       sudo chmod 644 /etc/logrotate.d/portfolio"
 
-echo "==> Ensuring iptables rule for TCP 23234..."
+echo "==> Ensuring iptables rule for TCP 22 (portfolio)..."
 $SSH "
-  if ! sudo iptables -C INPUT -p tcp --dport 23234 -m state --state NEW -j ACCEPT 2>/dev/null; then
+  if ! sudo iptables -C INPUT -p tcp --dport 22 -m state --state NEW -j ACCEPT 2>/dev/null; then
     REJECT_LINE=\$(sudo iptables -L INPUT --line-numbers -n | awk '/REJECT/{print \$1; exit}')
-    sudo iptables -I INPUT \"\${REJECT_LINE:-5}\" -p tcp --dport 23234 -m state --state NEW -j ACCEPT
+    sudo iptables -I INPUT \"\${REJECT_LINE:-5}\" -p tcp --dport 22 -m state --state NEW -j ACCEPT
     sudo netfilter-persistent save
+    echo 'iptables ACCEPT rule added for port 22'
   else
-    echo 'iptables rule already present'
+    echo 'iptables rule for port 22 already present'
   fi
 "
 
@@ -66,7 +67,7 @@ $SSH "sudo systemctl restart portfolio"
 sleep 2
 
 echo "==> Service status:"
-$SSH "sudo systemctl status portfolio --no-pager -l && sudo ss -tlnp | grep 23234"
+$SSH "sudo systemctl status portfolio --no-pager -l && sudo ss -tlnp | grep ':22 '"
 
 echo ""
 echo "==> Verify sha256 (local vs remote):"
@@ -87,7 +88,7 @@ $SSH "${REMOTE_DIR}/stats 2>/dev/null || echo '(no visits yet)'"
 
 echo ""
 echo "==> Done. Connect with:"
-echo "    ssh -p 23234 registsafack.duckdns.org"
+echo "    ssh registsafack.duckdns.org"
 echo ""
 echo "==> Read stats on server:"
 echo "    ssh ubuntu@152.70.21.255 /opt/portfolio/stats"
