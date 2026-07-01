@@ -21,18 +21,36 @@ func New() (*ssh.Server, error) {
 		addr = defaultAddr
 	}
 
-	opts := []ssh.Option{
-		wish.WithAddress(addr),
-		wish.WithMiddleware(
-			bm.Middleware(ui.TeaHandler),
-			activeterm.Middleware(),
-			logging.Middleware(),
-		),
+	mw := []wish.Middleware{
+		bm.Middleware(ui.TeaHandler),
+		activeterm.Middleware(),
+		logging.Middleware(),
 	}
 
-	hostKey := os.Getenv("PORTFOLIO_HOST_KEY")
-	if hostKey != "" {
-		opts = append(opts, wish.WithHostKeyPath(hostKey))
+	// Visitor logging is opt-in: both PORTFOLIO_LOG_PATH and
+	// PORTFOLIO_LOG_SALT must be set. The salt is generated once on the
+	// server and stored in /opt/portfolio/.env (never in git).
+	logPath := os.Getenv("PORTFOLIO_LOG_PATH")
+	logSalt := os.Getenv("PORTFOLIO_LOG_SALT")
+	if logPath != "" && logSalt != "" {
+		vl, err := openVisitorLog(logPath, logSalt)
+		if err != nil {
+			log.Warn("Visitor logging disabled", "error", err)
+		} else {
+			log.Info("Visitor logging enabled", "path", logPath)
+			mw = append(mw, visitorMiddleware(vl)) // outermost — runs first
+		}
+	} else {
+		log.Info("Visitor logging disabled (set PORTFOLIO_LOG_PATH + PORTFOLIO_LOG_SALT to enable)")
+	}
+
+	opts := []ssh.Option{
+		wish.WithAddress(addr),
+		wish.WithMiddleware(mw...),
+	}
+
+	if hk := os.Getenv("PORTFOLIO_HOST_KEY"); hk != "" {
+		opts = append(opts, wish.WithHostKeyPath(hk))
 	}
 
 	srv, err := wish.NewServer(opts...)
